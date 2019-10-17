@@ -57,9 +57,9 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "control_box"  do |control|
-    config.vm.hostname = "nexus.local"
-    nexus.vm.network :private_network, ip: "192.168.56.6"
-    nexus.vm.provider :virtualbox do |v|
+    config.vm.hostname = "control.local"
+    control.vm.network :private_network, ip: "192.168.56.6"
+    control.vm.provider :virtualbox do |v|
       v.gui = false
       v.memory = 1024
     end
