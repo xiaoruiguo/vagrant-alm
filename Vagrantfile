@@ -56,6 +56,15 @@ Vagrant.configure("2") do |config|
     end
   end
 
+  config.vm.define "control_box"  do |control|
+    config.vm.hostname = "nexus.local"
+    nexus.vm.network :private_network, ip: "192.168.56.6"
+    nexus.vm.provider :virtualbox do |v|
+      v.gui = false
+      v.memory = 1024
+    end
+  end
+
   config.vm.define "app_box", primary: true do |app|
       config.vm.hostname = "app.local"
       app.vm.network :private_network, ip: "192.168.56.11"
@@ -78,40 +87,40 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "jenkins" do |jenkins|
       config.vm.hostname = "jenkins.local"
-      jenkins.vm.network :private_network, ip: "172.16.10.100"
-      jenkins.vm.provider :libvirt do |lb|
+      jenkins.vm.network :private_network, ip: "192.168.56.100"
+      jenkins.vm.provider :virtualbox do |lb|
           lb.memory = 2048
       end
   end
 
   config.vm.define "sonar" do |sonar|
       config.vm.hostname = "sonar.local"
-      sonar.vm.network :private_network, ip: "172.16.10.110"
-      sonar.vm.provider :libvirt do |lb|
+      sonar.vm.network :private_network, ip: "192.168.56.110"
+      sonar.vm.provider :virtualbox do |lb|
           lb.memory = 2048
       end
   end
 
   config.vm.define "nexus", primary: true do |nexus|
       config.vm.hostname = "nexus.local"
-      nexus.vm.network :private_network, ip: "172.16.10.120"
-      nexus.vm.provider :libvirt do |lb|
+      nexus.vm.network :private_network, ip: "192.168.56.120"
+      nexus.vm.provider :virtualbox do |lb|
         lb.memory = 1024
       end
   end
 
   config.vm.define "app", primary: true do |app|
     config.vm.hostname = "app.local"
-    app.vm.network :private_network, ip: "172.16.10.130"
-    app.vm.provider :libvirt do |lb|
+    app.vm.network :private_network, ip: "192.168.56.130"
+    app.vm.provider :virtualbox do |lb|
         lb.memory = 512
     end
   end
 
   config.vm.define "app2", primary: true do |app2|
     config.vm.hostname = "app2.local"
-    app2.vm.network :private_network, ip: "172.16.10.140"
-    app2.vm.provider :libvirt do |lb|
+    app2.vm.network :private_network, ip: "192.168.56.140"
+    app2.vm.provider :virtualbox do |lb|
         lb.memory = 512
     end
   end
@@ -120,16 +129,29 @@ Vagrant.configure("2") do |config|
       libvirt.storage_pool_name = "ext_storage"
   end
 
-  config.vm.provision "ansible" do |ansible|
-      ansible.playbook = "ansible/alm.yml"
-      ansible.groups = {
-          "jenkins_server" => ["jenkins", "jenkins_box"],
-          "sonar_server" => ["sonar", "sonar_box"],
-          "nexus_server" => ["nexus", "nexus_box"],
-          "app_server" => ["app", "app2", "app_box", "app2_box"],
-      }
-  end
-
+#  config.vm.provision "ansible" do |ansible|
+#      ansible.playbook = "ansible/alm.yml"
+#      ansible.groups = {
+#          "jenkins_server" => ["jenkins", "jenkins_box"],
+#          "sonar_server" => ["sonar", "sonar_box"],
+#          "nexus_server" => ["nexus", "nexus_box"],
+#          "app_server" => ["app", "app2", "app_box", "app2_box"],
+#      }
+#  end
+  config.vm.provision "shell", inline: <<-SHELL
+  	cp -f /vagrant/aliBase.repo /etc/yum.repos.d/aliBase.repo
+    cp -f /vagrant/aliEpel.repo /etc/yum.repos.d/aliEpel.repo
+    yum update
+    yum upgrade
+	  USER=ansible
+	  useradd $USER
+	  echo tutor | passwd $USER --stdin
+    echo "$USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+	  sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+	  #sed -i 's/#PermitRootLogin yes/PermitRootLogin yes/g' /etc/ssh/sshd_config
+	  systemctl restart sshd
+	  service sshd restart
+  SHELL
   if Vagrant.has_plugin?("vagrant-hostmanager")
       config.hostmanager.enabled = true
       config.hostmanager.manage_host = true

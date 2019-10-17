@@ -1,0 +1,5 @@
+[aliEpel]
+name=aliEpel
+baseurl=https://mirrors.aliyun.com/epel/$releasever\Server/$basearch/
+enabled=1
+gpgcheck=0

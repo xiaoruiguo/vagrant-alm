@@ -1,0 +1,6 @@
+[aliBase]
+name=aliBase
+baseurl=https://mirrors.aliyun.com/centos/$releasever/os/$basearch/
+enabled=1
+gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/centos/$releasever/os/$basearch/RPM-GPG-KEY-CentOS-$releasever
