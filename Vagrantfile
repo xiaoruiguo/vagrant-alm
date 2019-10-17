@@ -87,40 +87,40 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "jenkins" do |jenkins|
       config.vm.hostname = "jenkins.local"
-      jenkins.vm.network :private_network, ip: "192.168.56.100"
-      jenkins.vm.provider :virtualbox do |lb|
+      jenkins.vm.network :private_network, ip: "172.16.10.100"
+      jenkins.vm.provider :libvirt do |lb|
           lb.memory = 2048
       end
   end
 
   config.vm.define "sonar" do |sonar|
       config.vm.hostname = "sonar.local"
-      sonar.vm.network :private_network, ip: "192.168.56.110"
-      sonar.vm.provider :virtualbox do |lb|
+      sonar.vm.network :private_network, ip: "172.16.10.110"
+      sonar.vm.provider :libvirt do |lb|
           lb.memory = 2048
       end
   end
 
   config.vm.define "nexus", primary: true do |nexus|
       config.vm.hostname = "nexus.local"
-      nexus.vm.network :private_network, ip: "192.168.56.120"
-      nexus.vm.provider :virtualbox do |lb|
+      nexus.vm.network :private_network, ip: "172.16.10.120"
+      nexus.vm.provider :libvirt do |lb|
         lb.memory = 1024
       end
   end
 
   config.vm.define "app", primary: true do |app|
     config.vm.hostname = "app.local"
-    app.vm.network :private_network, ip: "192.168.56.130"
-    app.vm.provider :virtualbox do |lb|
+    app.vm.network :private_network, ip: "172.16.10.130"
+    app.vm.provider :libvirt do |lb|
         lb.memory = 512
     end
   end
 
   config.vm.define "app2", primary: true do |app2|
     config.vm.hostname = "app2.local"
-    app2.vm.network :private_network, ip: "192.168.56.140"
-    app2.vm.provider :virtualbox do |lb|
+    app2.vm.network :private_network, ip: "172.16.10.140"
+    app2.vm.provider :libvirt do |lb|
         lb.memory = 512
     end
   end
