@@ -125,9 +125,9 @@ Vagrant.configure("2") do |config|
   #   end
   # end
 
-  config.vm.provider "libvirt" do |libvirt|
-      libvirt.storage_pool_name = "ext_storage"
-  end
+  # config.vm.provider "libvirt" do |libvirt|
+  #     libvirt.storage_pool_name = "ext_storage"
+  # end
 
 #  config.vm.provision "ansible" do |ansible|
 #      ansible.playbook = "ansible/alm.yml"
